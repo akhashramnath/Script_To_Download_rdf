@@ -1,0 +1,44 @@
+#Script to copy rdf files to /unix_directory_of_urchoice/REPORTS location
+. EBS_ENV_file    #### Source your E-Business Suite env file here
+
+echo "###### You choose to download RDF file from PROD env"
+scr_log=$LOG_HOME/reports_get_op_xbol.log;export scr_log
+usr_nme=`whoami`; export usr_nme
+hstnme=`hostname`; export hstnme
+find_log=$LOG_HOME/reports_find_xbol.log;export find_log
+
+#echo $usr_nme
+#echo $hstnme
+name_conv=`echo $usr_nme|tr 'a-z' 'A-Z'`;export name_conv
+#echo "User Name is : $name_conv"
+echo "User $name_conv has logged in to $hstnme at $dateis" >> $scr_log
+
+echo -e "Enter the file name : \c"
+read fle_name
+if [ "$fle_name" = "" ]; then
+echo "You entered NULL Value for filename, please enter a valid file name. Exiting from script !!!!"
+echo "User entered NULL Value for filename, exiting from script !!!! - Date: $dateis" >> $scr_log
+echo -e "\n" >> $scr_log
+exit;
+else
+echo "File name is $fle_name"
+echo "User $name_conv has typed the filename $fle_name" >> $scr_log
+#echo "\n" >> $scr_log
+cd $XBOL_TOP/reports/US/
+echo "Finding file $fle_name from "$"XBOL_TOP/reports/US - Date: $dateis" >> $scr_log
+find . -name "$fle_name" > $find_log
+F15M="cut -d "/" -f2 $find_log";export F15M
+F16M=`cat $find_log|wc -l`;export F16M
+if [ "$F16M" -gt 0 ]
+then
+echo "File $fle_name was found in "$"XBOL_TOP/reports/US/" >> $scr_log
+cp $XBOL_TOP/reports/US/$fle_name /unix_directory_of_urchoice/REPORTS/
+echo "The file $fle_name has been copied to /unix_directory_of_urchoice/REPORTS - Date: $dateis"
+echo "The file $fle_name has been copied to /unix_directory_of_urchoice/REPORTS - Date: $dateis" >> $scr_log
+echo -e "\n" >> $scr_log
+else
+echo "The file $fle_name does not exist in "$"XBOL_TOP/reports/US/ - Date: $dateis, pls verify the file name"
+echo "The file $fle_name does not exist in "$"XBOL_TOP/reports/US/ - Date: $dateis" >> $scr_log
+echo -e "\n" >> $scr_log
+fi
+fi
